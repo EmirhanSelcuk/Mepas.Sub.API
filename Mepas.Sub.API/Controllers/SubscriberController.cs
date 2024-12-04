@@ -1,35 +1,43 @@
 ﻿using Mepas.Sub.API.Models;
-using Mepas.Sub.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mepas.Sub.API.Controllers
+
+[Route("api/[controller]")]
+[ApiController]
+public class SubscriberController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SubscriberController : Controller
+    private readonly ISubscriberService _subscriberService;
+
+
+
+    public SubscriberController(ISubscriberService subscriberService)
     {
-        private readonly ISubscriberService _subscriberService;
+        _subscriberService = subscriberService;
+    }
 
-        public SubscriberController(ISubscriberService subscriberService)
+    [HttpGet]
+    public async Task<ActionResult<List<Subscriber>>> GetSubscribers(string KayitTarihiBaslangic, string KayitTarihiBitis, string AranmaTarihiBaslangic, string AranmaTarihiBitis)
+    {
+        // Tarihleri parse et
+        DateTime kayitBaslangic = DateTime.Parse(KayitTarihiBaslangic);
+        DateTime kayitBitis = DateTime.Parse(KayitTarihiBitis);
+        DateTime aranmaBaslangic = DateTime.Parse(AranmaTarihiBaslangic);
+        DateTime aranmaBitis = DateTime.Parse(AranmaTarihiBitis);
+
+        // Kayıt tarih aralığını doğrulama
+        if (!DateHelper.IsValidDateRange(kayitBaslangic, kayitBitis))
         {
-            _subscriberService = subscriberService;
+            return BadRequest("Kayıt tarih aralığı geçersiz.");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subscriber>>> GetSubscribers(
-            [FromQuery] string KayitTarihiBaslangic,
-            [FromQuery] string KayitTarihiBitis,
-            [FromQuery] string AranmaTarihiBaslangic,
-            [FromQuery] string AranmaTarihiBitis)
+        // Aranma tarih aralığını doğrulama
+        if (!DateHelper.IsValidDateRange(aranmaBaslangic, aranmaBitis))
         {
-            var result = await _subscriberService.GetSubscribersAsync(KayitTarihiBaslangic, KayitTarihiBitis, AranmaTarihiBaslangic, AranmaTarihiBitis);
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Message);
-            }
-
-            return Ok(result.Data);
+            return BadRequest("Arama tarih aralığı geçersiz.");
         }
+
+        // SubscriberService'e veri gönder
+        var result = await _subscriberService.GetSubscribersAsync(kayitBaslangic, kayitBitis, aranmaBaslangic, aranmaBitis);
+        return Ok(result.Data);
     }
 }
