@@ -1,9 +1,5 @@
 ﻿using Mepas.Sub.API.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mepas.Sub.API.Repositories
 {
@@ -29,11 +25,9 @@ namespace Mepas.Sub.API.Repositories
         {
             var query = _context.Subscribers.AsQueryable();
 
-            // Kayıt tarih aralığını filtrele
             if (kayitBaslangic.HasValue && kayitBitis.HasValue)
                 query = query.Where(r => r.KayitTarihi >= kayitBaslangic.Value && r.KayitTarihi <= kayitBitis.Value);
 
-            // Aranma tarih aralığını filtrele
             if (aranmaBaslangic.HasValue && aranmaBitis.HasValue)
                 query = query.Where(r => r.AranmaTarihi >= aranmaBaslangic.Value && r.AranmaTarihi <= aranmaBitis.Value);
 
