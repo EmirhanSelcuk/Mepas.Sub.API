@@ -1,5 +1,4 @@
 using Mepas.Sub.API.Models;
-using Mepas.Sub.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
