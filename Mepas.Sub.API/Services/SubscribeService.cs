@@ -1,6 +1,5 @@
 ﻿using Mepas.Sub.API.Helpers;
 using Mepas.Sub.API.Models;
-using Mepas.Sub.API.Repositories;
 
 public class SubscriberService : ISubscriberService
 {
