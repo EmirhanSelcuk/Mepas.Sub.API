@@ -1,4 +1,5 @@
-﻿using Mepas.Sub.API.Models;
+﻿using Mepas.Sub.API.Helpers;
+using Mepas.Sub.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -13,6 +14,24 @@ public class SubscriberController : ControllerBase
     public SubscriberController(ISubscriberService subscriberService)
     {
         _subscriberService = subscriberService;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Subscriber>> CreateSubscriber([FromBody] Subscriber subscriber)
+    {
+        if (subscriber == null)
+        {
+            return BadRequest("Abone bilgileri eksik.");
+        }
+
+        var result = await _subscriberService.CreateSubscriberAsync(subscriber);
+
+        if (!result.IsSuccess)
+        {
+            return StatusCode(500, result.Message);
+        }
+
+        return CreatedAtAction(nameof(GetSubscribers), new { id = subscriber.Id }, subscriber);
     }
 
     [HttpGet]

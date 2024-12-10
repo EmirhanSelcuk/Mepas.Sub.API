@@ -1,4 +1,5 @@
-﻿using Mepas.Sub.API.Models;
+﻿using Mepas.Sub.API.Helpers;
+using Mepas.Sub.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class SubscriberRepository : ISubscriberRepository
@@ -30,4 +31,11 @@ public class SubscriberRepository : ISubscriberRepository
 
         return await query.ToListAsync();
     }
+    public async Task CreateSubscriberAsync(Subscriber subscriber)
+    {
+        _context.Subscribers.Add(subscriber); // Yeni aboneyi ekle
+        await _context.SaveChangesAsync(); // Değişiklikleri kaydet
+    }
+
+
 }
