@@ -46,13 +46,13 @@ public class SubscriberController : ControllerBase
         // Kayıt tarih aralığını doğrulama
         if (!DateHelper.IsValidDateRange(kayitBaslangic, kayitBitis))
         {
-            return BadRequest("Kayıt tarih aralığı geçersiz.");
+            throw new ArgumentException("Kayıt başlangıç tarihi geçersiz.");
         }
 
         // Aranma tarih aralığını doğrulama
         if (!DateHelper.IsValidDateRange(aranmaBaslangic, aranmaBitis))
         {
-            return BadRequest("Arama tarih aralığı geçersiz.");
+            throw new ArgumentException("Aranma bitiş tarihi geçersiz.");
         }
 
         // SubscriberService'e veri gönder

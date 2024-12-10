@@ -1,8 +1,12 @@
-﻿namespace Mepas.Sub.API.Middleware
+﻿using System.Net;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace Mepas.Sub.API.Middleware
 {
     public class ExceptionMiddleware
     {
-
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
 
@@ -20,17 +24,24 @@
             }
             catch (Exception ex)
             {
-                // Hata yakalama işlemleri burada yapılabilir
-                _logger.LogError(ex, "bir hata olustu");
+                _logger.LogError(ex, "Beklenmeyen bir hata oluştu");
                 await HandleExceptionAsync(context, ex);
             }
         }
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.StatusCode = 500;
-            return context.Response.WriteAsync("Bir hata olustu.");
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            var errorDetails = new
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = exception.Message,
+                Details = exception.StackTrace
+            };
+
+            return context.Response.WriteAsync(JsonSerializer.Serialize(errorDetails));
         }
     }
 }
-
